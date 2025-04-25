@@ -15,13 +15,7 @@ return {
   },
   ignored_files = {
     'run_test.lua',
-  },
-  prerun = function()
-    local mt = require 'moontest'
-    -- Globally load methods
-    Describe = mt.describe
-    It = mt.it
-  end,
+  }
 }
 ```
 

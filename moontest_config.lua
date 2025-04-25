@@ -6,10 +6,5 @@ return {
   },
   ignored_files = {
     'run_test.lua',
-  },
-  prerun = function()
-    local mt = require 'moontest'
-    Describe = mt.describe
-    It = mt.it
-  end,
+  }
 }

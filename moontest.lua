@@ -20,7 +20,7 @@ local utils = {
 
 ---@class Moontest_Fs
 local fs = {
-    cwd = os.getenv("PWD") --[[ @as string ]],
+    cwd = os.getenv("PWD"):gsub(' ', '') --[[ @as string ]],
     os_name = utils.tern(package.config:sub(1, 1) == '/', 'unix', 'windows') --[[ @as 'unix' | 'window' ]],
     separator = utils.tern(package.config:sub(1, 1) == '/', '/', '\\'),
 
@@ -94,67 +94,70 @@ local moontest = {
     end
 }
 
+local current_test_path = ''
+
+---@param name string
+---@param body table<string, Moontest_ReservedMethods | fun(): nil>
+function Describe(name, body)
+    ---@class Moontest_ReservedMethods
+    local reserved_methods = {
+        before_all = true,
+        before_each = true,
+        after_each = true,
+        after_all = true
+    }
+    print(name)
+
+    if body.before_all then body.before_all() end
+
+    for k, test_case in pairs(body) do
+        if not reserved_methods[k] then
+            if body.before_each then body.before_each() end
+            test_case()
+            if body.after_each then body.after_each() end
+        end
+    end
+
+    if body.after_all then body.after_all() end
+end
+
+---@param name string
+---@param test fun(): boolean[]
+---@return fun(hooks: table): nil
+function It(name, test)
+    return function()
+        local result = test()
+
+        if not result then
+            print('\t[FAILED]: None assertion list found' .. '.' .. ' Test file: ' .. current_test_path)
+            return false
+        end
+
+        if #result == 0 then
+            print('\t[FAILED]: None assertion found for: "' .. name .. '"' .. '.' .. ' Test file: ' .. current_test_path)
+            return false
+        end
+
+        local stop = false
+
+        for i, v in ipairs(result) do
+            if v == false then
+                print('\t[FAILED]: ' ..
+                name .. ': >> Assertion ' .. i .. ' failed' .. '.' .. ' Test file: ' .. current_test_path)
+                stop = true
+                break
+            end
+        end
+
+        if stop then
+            return
+        end
+
+        print('\tpassed: ' .. name)
+    end
+end
+
 return {
-    ---@param name string
-    ---@param body table<string, Moontest_ReservedMethods | fun(): nil>
-    describe = function(name, body)
-        ---@class Moontest_ReservedMethods
-        local reserved_methods = {
-            before_all = true,
-            before_each = true,
-            after_each = true,
-            after_all = true
-        }
-        print('Running: ' .. name)
-
-        if body.before_all then body.before_all() end
-
-        for k, test_case in pairs(body) do
-            if not reserved_methods[k] then
-                if body.before_each then body.before_each() end
-                test_case()
-                if body.after_each then body.after_each() end
-            end
-        end
-
-        if body.after_all then body.after_all() end
-    end,
-
-    ---@param name string
-    ---@param test fun(): boolean[]
-    ---@return fun(hooks: table): nil
-    it = function(name, test)
-        return function()
-            local result = test()
-
-            if not result then
-                print('\t[FAILED]: None assertion list found')
-                return false
-            end
-
-            if #result == 0 then
-                print('\t[FAILED]: None assertion found for: "' .. name .. '"')
-                return false
-            end
-
-            local stop = false
-
-            for i, v in ipairs(result) do
-                if v == false then
-                    print('\t[FAILED]: ' .. name .. ': >> Assertion ' .. i .. ' failed')
-                    stop = true
-                    break
-                end
-            end
-
-            if stop then
-                return
-            end
-
-            print('\tpassed: ' .. name)
-        end
-    end,
-
     run = function()
         local function get_tests(dir_path, test_list)
             local files = fs:ls(dir_path)
@@ -214,7 +217,11 @@ return {
             moontest.configs.prerun()
         end
 
+        local cwd_len = #fs.cwd
+
         for i = 1, #test_files do
+            local test_path = test_files[i]
+            current_test_path = '.' .. string.sub(test_path, cwd_len + 1, #test_path)
             dofile(test_files[i])
         end
 
@@ -238,11 +245,11 @@ return {
 ---@field load_config fun(self: Moontest): nil
 --
 ---@class Moontest_Config
----@field test_suffix string
----@field ignored_dirs string[]
----@field ignored_files string[]
----@field prerun Fn | nil
----@field postrun Fn | nil
+---@field test_suffix? string
+---@field ignored_dirs? string[]
+---@field ignored_files? string[]
+---@field prerun? Fn | nil
+---@field postrun? Fn | nil
 --
 ---@class Moontest_ReservedMethods
 ---@field before_all true
