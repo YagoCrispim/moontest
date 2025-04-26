@@ -14,6 +14,11 @@ local utils = {
 
         ends_with = function(str, suffix)
             return str:sub(- #suffix) == suffix
+        end,
+
+        includes = function(str, substr)
+            local result = string.find(str, substr)
+            return result ~= nil
         end
     }
 }
@@ -78,14 +83,14 @@ local moontest = {
         end
 
         for k, v in pairs(config_file --[[ @as Moontest_Config ]]) do
-            if k == 'ignored_dirs' then
-                for i = 1, #config_file.ignored_dirs do
-                    table.insert(
-                        self.configs.ignored_dirs,
-                        fs:join({ fs.cwd, config_file.ignored_dirs[i] })
-                    )
-                end
-            end
+            -- if k == 'ignored_dirs' then
+            --     for i = 1, #config_file.ignored_dirs do
+            --         table.insert(
+            --             self.configs.ignored_dirs,
+            --             fs:join({ fs.cwd, config_file.ignored_dirs[i] })
+            --         )
+            --     end
+            -- end
 
             if v then
                 self.configs[k] = v
@@ -143,7 +148,7 @@ function It(name, test)
         for i, v in ipairs(result) do
             if v == false then
                 print('\t[FAILED]: ' ..
-                name .. ': >> Assertion ' .. i .. ' failed' .. '.' .. ' Test file: ' .. current_test_path)
+                    name .. ': >> Assertion ' .. i .. ' failed' .. '.' .. ' Test file: ' .. current_test_path)
                 stop = true
                 break
             end
@@ -187,14 +192,14 @@ return {
                         local is_ignored = false
 
                         for i = 1, #moontest.configs.ignored_dirs do
-                            if utils.string.starts_with(path, moontest.configs.ignored_dirs[i]) then
+                            if utils.string.includes(path, moontest.configs.ignored_dirs[i]) then
                                 is_ignored = true
                                 break
                             end
                         end
 
                         for i = 1, #moontest.configs.ignored_files do
-                            if utils.string.ends_with(path, moontest.configs.ignored_files[i]) then
+                            if utils.string.includes(path, moontest.configs.ignored_files[i]) then
                                 is_ignored = true
                                 break
                             end
@@ -273,3 +278,4 @@ return {
 ---@class Moontest_UtilsString
 ---@field starts_with fun(str: string, prefix: string): boolean
 ---@field ends_with fun(str: string, suffix: string): boolean
+---@field includes fun(str: string, substr: string): boolean
