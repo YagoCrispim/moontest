@@ -1,25 +1,3 @@
-# moontest
-
-Single file test utility for testing
-
-## Example
-
-```lua
--- moontest_config.lua
-return {
-  test_suffix = '_test.lua',
-  ignored_dirs = {
-    -- 'dir_one',
-    -- 'dir_two',
-  },
-  ignored_files = {
-    'run_test.lua',
-  }
-}
-```
-
-```lua
--- example_test.lua
 require 'moontest'
 
 ---@param name string
@@ -64,4 +42,3 @@ Describe("Example test - Person", {
         return { data.name == "John 2", data.age == 200 }
     end) --
 })
-```
