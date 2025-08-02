@@ -1,6 +1,6 @@
 # moontest
 
-Single file test utility without dependencies
+Single file test utility for testing
 
 ## Example
 
