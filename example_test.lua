@@ -1,3 +1,5 @@
+require 'moontest'
+
 ---@param name string
 ---@param age number
 ---@return Person

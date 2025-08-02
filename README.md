@@ -6,7 +6,6 @@ Single file test utility without dependencies
 
 ```lua
 -- moontest_config.lua
-
 return {
   test_suffix = '_test.lua',
   ignored_dirs = {
@@ -20,7 +19,8 @@ return {
 ```
 
 ```lua
--- test.lua
+-- example_test.lua
+require 'moontest'
 
 ---@param name string
 ---@param age number
@@ -65,5 +65,3 @@ Describe("Example test - Person", {
     end) --
 })
 ```
-
-## WIP docs
