@@ -1,5 +1,3 @@
-require 'moontest'
-
 ---@param name string
 ---@param age number
 ---@return Person
@@ -23,22 +21,21 @@ end
 ---@type Person
 local person = nil
 
-Describe("Example test - Person", {
-    -- before_all = function() print("Before all") end,
-    -- after_all = function() print("After all") end,
-    before_each = function()
+Describe("Example test - Person", function(mt)
+    mt.beforeEach(function()
         person = Person("John", 21)
-    end,
-    -- after_each = function() print("After each") end,
-    --
+    end)
+
     It("should return name and age", function()
         local data = person:get_data()
-        return { data.name == "John", data.age == 21 }
-    end), --
-    --
+        mt.eq(data.name, "John")
+        mt.eq(data.age, 21)
+    end)
+
     It("should set data", function()
         person:set_data({ name = "John 2", age = 200 })
         local data = person:get_data()
-        return { data.name == "John 2", data.age == 200 }
-    end) --
-})
+        mt.eq(data.name, "John 2")
+        mt.eq(data.age, 2000)
+    end)
+end)
