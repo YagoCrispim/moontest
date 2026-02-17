@@ -1,10 +1,15 @@
+---@generic T
+---@generic F
+---@param cond boolean
+---@param if_true T
+---@param if_false F
+---@return T | F
 local function tern(cond, if_true, if_false)
   if cond then
     return if_true
   end
   return if_false
 end
-
 
 ---@return MT_OSName
 local function getOSName()

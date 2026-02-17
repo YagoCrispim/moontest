@@ -5,8 +5,6 @@ local fs = require 'src.fs'
 local Moontest = {
     ignoredDirs = {},
     ignoredFiles = {},
-    prerun = function() end,
-    postrun = function() end,
     testSuffix = '_test.lua',
     config = {},
     currentScope = nil,
@@ -41,7 +39,7 @@ local function loadConfig()
     local success, configFile = pcall(
         function()
             ---@return Moontest_Config
-            return require('moontest_config')
+            return require('moontest')
         end)
 
     if not success then
@@ -191,7 +189,6 @@ function Describe(name, cb)
 end
 
 loadConfig()
-Moontest.prerun()
 
 local testFiles = getTests(fs.cwd)
 
@@ -200,7 +197,6 @@ for i = 1, #testFiles do
     dofile(testFiles[i])
 end
 
-Moontest.postrun()
 --
 ---@alias Fn fun(): nil
 --
@@ -208,18 +204,14 @@ Moontest.postrun()
 ---@field testSuffix string
 ---@field ignoredDirs string[]
 ---@field ignoredFiles string[]
----@field prerun Fn
----@field postrun Fn
 ---@field config Moontest_Config
 ---@field testsStack Moontest_Scope[]
 ---@field currentScope? Moontest_Scope
 --
 ---@class Moontest_Config
----@field test_suffix? string
----@field ignored_dirs? string[]
----@field ignored_files? string[]
----@field prerun? Fn | nil
----@field postrun? Fn | nil
+---@field testSuffix? string
+---@field ignoredDirs? string[]
+---@field ignoredFiles? string[]
 --
 ---@class Moontest_Scope
 ---@field testName string

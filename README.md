@@ -43,23 +43,23 @@ end)
 ## Optional Configuration File
 
 - All configuration fields are optional. If no configuration file is provided, default settings will be used.
-- You can customize test discovery behavior by creating a `moontest_config.lua` file:
+- You can customize test discovery behavior by creating a `moontest.lua` file:
 
 ```lua
--- moontest_config.lua
+-- moontest.lua
 -- default values
 return {
   -- Optional: file suffix used to identify test files
-  test_suffix = '_test.lua',
+  testSuffix = '_test.lua',
 
   -- Optional: directories to ignore during test discovery
-  ignored_dirs = {
+  ignoredDirs = {
     'ignored_dir_one',
     'ignored_dir_two',
   },
 
   -- Optional: specific files to ignore
-  ignored_files = {
+  ignoredFiles = {
     'run_test.lua',
   }
 }
