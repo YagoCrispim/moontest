@@ -123,6 +123,18 @@ local function eq(expected, received)
 end
 
 ---@param name string
+---@param test fun(): nil
+local function it(name, test)
+    table.insert(Moontest.currentScope.tests, function()
+        Moontest.currentScope.testName = name
+        test()
+        if Moontest.currentScope.failure == false then
+            print('\tsuccess: ' .. name)
+        end
+    end)
+end
+
+---@param name string
 ---@param cb function
 function Describe(name, cb)
     pushScope()
@@ -130,7 +142,10 @@ function Describe(name, cb)
     Moontest.currentScope = Moontest.testsStack[#Moontest.testsStack]
     local scope = Moontest.currentScope --[[ @as Moontest_Scope ]]
 
+    ---@type Moontest_DescribeContext
     local mt = {
+        it = it,
+        eq = eq,
         ---@param hcb function
         beforeAll = function(hcb)
             table.insert(scope.hooks.beforeAll, hcb)
@@ -147,7 +162,6 @@ function Describe(name, cb)
         afterEach = function(hcb)
             table.insert(scope.hooks.afterEach, hcb)
         end,
-        eq = eq
     }
 
     print(name)
@@ -174,18 +188,6 @@ function Describe(name, cb)
     end
 
     popScope()
-end
-
----@param name string
----@param test fun(): nil
-function It(name, test)
-    table.insert(Moontest.currentScope.tests, function()
-        Moontest.currentScope.testName = name
-        test()
-        if Moontest.currentScope.failure == false then
-            print('\tsuccess: ' .. name)
-        end
-    end)
 end
 
 loadConfig()
@@ -230,3 +232,11 @@ Moontest.postrun()
 ---@field beforeEach function[]
 ---@field afterEach function[]
 ---@field afterAll function[]
+--
+---@class Moontest_DescribeContext
+---@field it function
+---@field eq fun(expected: any, received: any): nil
+---@field beforeAll fun(hookCb: function): nil
+---@field beforeEach fun(hookCb: function): nil
+---@field afterEach fun(hookCb: function): nil
+---@field afterAll fun(hookCb: function): nil
