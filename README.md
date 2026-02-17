@@ -1,6 +1,7 @@
 # moontest
 
-Single file test utility for testing
+Lightweight, single-file testing utility for Lua.
+It provides a simple and expressive API for defining test suites, test cases, and setup hooks without external dependencies or complex configuration.
 
 ## Example
 
@@ -37,30 +38,37 @@ Describe("Example test - Person", function(mt)
         mt.eq(data.age, 2000)
     end)
 end)
-
 ```
 
-## Config file - optional
+## Optional Configuration File
+
+- All configuration fields are optional. If no configuration file is provided, default settings will be used.
+- You can customize test discovery behavior by creating a `moontest_config.lua` file:
 
 ```lua
 -- moontest_config.lua
 -- default values
 return {
-  -- optional
+  -- Optional: file suffix used to identify test files
   test_suffix = '_test.lua',
-  -- optional
+
+  -- Optional: directories to ignore during test discovery
   ignored_dirs = {
     'ignored_dir_one',
     'ignored_dir_two',
   },
-  -- optional
+
+  -- Optional: specific files to ignore
   ignored_files = {
     'run_test.lua',
   }
 }
 ```
 
-## Execution
+## Running Tests
+
+- The runner will automatically discover and execute test files according to the configuration rules.
+- Execute the test runner from the command line:
 
 ```bash
 lua src/moontest.lua
