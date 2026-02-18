@@ -14,7 +14,6 @@ local currentFilePath = ''
 _G.Moontest = true
 
 -------------
-
 local function pushScope()
     ---@type Moontest_Scope
     local scope = {
@@ -197,9 +196,9 @@ for i = 1, #testFiles do
     dofile(testFiles[i])
 end
 
---
+---
 ---@alias Fn fun(): nil
---
+---
 ---@class Moontest
 ---@field testSuffix string
 ---@field ignoredDirs string[]
@@ -207,24 +206,24 @@ end
 ---@field config Moontest_Config
 ---@field testsStack Moontest_Scope[]
 ---@field currentScope? Moontest_Scope
---
+---
 ---@class Moontest_Config
 ---@field testSuffix? string
 ---@field ignoredDirs? string[]
 ---@field ignoredFiles? string[]
---
+---
 ---@class Moontest_Scope
 ---@field testName string
 ---@field tests function[]
 ---@field hooks Moontest_Hooks
 ---@field failure boolean
---
+---
 ---@class Moontest_Hooks
 ---@field beforeAll function[]
 ---@field beforeEach function[]
 ---@field afterEach function[]
 ---@field afterAll function[]
---
+---
 ---@class Moontest_DescribeContext
 ---@field it function
 ---@field eq fun(expected: any, received: any): nil
